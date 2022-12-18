@@ -80,7 +80,7 @@ class App():
 
         self.vjImg = pimg(file = r"img\\vj.png")
         self.userImg = pimg(file = r"img\\user.png")
-        self.setImg = pimg(file = r"img\\set.png")
+        self.userImg = pimg(file = r"img\\user.png")
         self.cartImg = pimg(file = r"img\\cart.png")
 
         # DIREITOS AUTORAIS ----------------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ class App():
             text = self.ms,
             font = 'Arial 8 italic',
             bg = 'black', fg = 'grey'
-            ).place(x=690, y= 670, anchor = 'center')
+            ).place(x=690, y= 660, anchor = 'center')
         
 
         # Login Vermelho: d90429
@@ -258,13 +258,31 @@ class App():
             bg = self.bg,
             fg = 'White',
             font='Arial 12 bold'
-        )
+            )
+
         self.combo = ttk.Combobox(
             self.setFrame,
             values=self.fls
-        )
+            ) 
         self.combo.set('L062')
         self.combo['state'] = 'readonly'
+
+        self.ttAdd = Label(
+            self.setFrame,
+            text = 'Adicionar Usuário:',
+            fg = 'White',
+            bg = self.bg,
+            font = 'Arial 12 bold'
+        )
+
+        self.btnAdd = Button(
+            self.setFrame,
+            image = self.userImg,
+            bg = self.bg,
+            activebackground = self.bg,
+            borderwidth = 0,
+            command = self.Add
+        )
 
         # UpDate and Bind
         self.win.bind('<F5>', self.hxh)
@@ -306,8 +324,11 @@ class App():
         self.lblEs.place(x = 170, y = 40, anchor = 'center')
         
         # SET FRAME
-        self.ttCombo.place(x = 10, y = 20)
-        self.combo.place(x = 10, y = 50)
+        self.ttCombo.place(x = 90, y = 20, anchor = 'center')
+        self.combo.place(x = 90, y = 70, anchor = 'center')
+
+        self.ttAdd.place(x = 300, y = 20, anchor = 'center')
+        self.btnAdd.place(x = 300, y = 70, anchor = 'center')
 
     # Functions
     def msg(self, tp, msg):
@@ -332,8 +353,7 @@ class App():
         self.lblHora.after(1000, self.atualizar)
 
     def login(self):
-        win2 = Tk()
-        win2.iconbitmap("img/icon.ico")        
+        win2 = Toplevel()       
         win2.geometry("250x250")
         win2['bg'] = '#333'
         win2.resizable(width=False, height=False)
@@ -369,7 +389,6 @@ class App():
         Button(win2, text = "Login", font = "arial 10", command= cons).pack(pady = 10)
 
         win2.bind('<Return>', cons)
-        win2.mainloop()
         
     def logout(self):
         if self.nome != 'Undefined':
@@ -378,6 +397,93 @@ class App():
             self.msg(1, 'Lougout realizado com sucesso!!')
         else:
             self.msg(1, 'Realize Login !!!')
+
+    def Add(self):
+        def enviar(event):
+            nomedb = nome.get()
+            matdb = mat.get()
+            senhadb = senha.get()
+            print(nomedb, senhadb, matdb)
+            if nomedb != '' and matdb != '' and senhadb != '':
+                self.c.execute(f'insert into user(nome, matricula, senha) values ("{nomedb}","{int(matdb)}","{senhadb}")')
+                self.conn.commit()
+                nomep = nomedb.split()
+                self.msg(1, f'{nomep[0]} adicionado com sucesso!')
+                add.destroy()
+            else:
+                self.msg(2, 'Dados Inválidos')
+
+        add = Toplevel()
+        add.geometry('400x400')
+        add.resizable(width=False, height=False)
+        add['bg'] = self.bg
+
+        tt = Label(
+            add,
+            text='Adicionar novo Usuário!',
+            bg = self.bg,
+            fg = 'GhostWhite',
+            font = 'Fantasy 15 bold'
+        )
+        nomelbl = Label(
+            add,
+            text = 'Nome:',
+            bg = self.bg,
+            fg = 'White',
+            font = 'Arial 12 bold'
+            )
+        nome = Entry(
+            add,
+            bg = 'Black',
+            fg = 'white',
+            font = 'Arial 12 bold'
+            )
+
+        matlbl = Label(
+            add,
+            text = 'Matricula:',
+            bg = self.bg,
+            fg = 'White',
+            font = 'Arial 12 bold'
+            )
+        mat = Entry(
+            add,
+            bg = 'Black',
+            fg = 'white',
+            font = 'Arial 12 bold'
+            )
+
+        senhalbl = Label(
+            add,
+            text = 'Senha:',
+            bg = self.bg,
+            fg = 'White',
+            font = 'Arial 12 bold'
+            )
+        senha = Entry(
+            add,
+            bg = 'Black',
+            fg = 'white',
+            font = 'Arial 12 bold',
+            show = '*'
+            )
+        btnEnviar = Button(
+            add,
+            text = 'Adicionar!',
+            bg = '#d90429',
+            fg = 'White',
+            font ='Arial 11 bold',
+            command = partial(enviar, 1)
+        )
+        tt.place(x = 200, y = 20, anchor = 'center')
+        nomelbl.place(x = 200, y = 80, anchor = 'center')
+        nome.place(x = 200, y = 110, anchor = 'center')
+        matlbl.place(x = 200, y = 140, anchor = 'center')
+        mat.place(x = 200, y = 170, anchor = 'center')
+        senhalbl.place(x = 200, y = 200, anchor = 'center')
+        senha.place(x = 200, y = 230, anchor = 'center')
+        btnEnviar.place(x = 200, y = 290, anchor = 'center')
+        add.bind('<Return>', enviar)
 
     #========================CALL=BACK=============================
 
