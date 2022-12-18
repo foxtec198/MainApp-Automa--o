@@ -1,7 +1,7 @@
 from openpyxl import load_workbook as lw
 from sqlite3 import connect
 from tkinter import *
-from tkinter import ttk, messagebox, PhotoImage
+from tkinter import ttk, messagebox, PhotoImage, filedialog
 from time import strftime as st
 
 from metas import Metas
@@ -423,6 +423,13 @@ class App():
         add.resizable(width=False, height=False)
         add['bg'] = self.bg
 
+        tti = Label(
+            add,
+            image = self.userImg,
+            borderwidth = 0,
+            bg = self.bg,
+            activebackground = self.bg
+        )
         tt = Label(
             add,
             text='Adicionar novo Usuário!',
@@ -480,6 +487,7 @@ class App():
             font ='Arial 11 bold',
             command = partial(enviar, 1)
         )
+        tti.place(x = 30, y = 20, anchor = 'center')
         tt.place(x = 200, y = 20, anchor = 'center')
         nomelbl.place(x = 200, y = 80, anchor = 'center')
         nome.place(x = 200, y = 110, anchor = 'center')
