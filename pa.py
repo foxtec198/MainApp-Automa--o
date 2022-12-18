@@ -2,7 +2,7 @@ from openpyxl import load_workbook as lw
 
 class PA():
     def __init__(self):
-        self.planilha = lw(r"parcial.xlsx")
+        self.planilha = lw(r"pln//parcial.xlsx")
         self.ws = self.planilha.active
         ws = self.ws
         for i in range(4, 24):
@@ -37,11 +37,11 @@ class PA():
         self.ws[self.posPA] = float(self.valorp)
 
     def cons(self):
-        a = open("clb.txt", "r")
+        a = open(r"txt//clb.txt", "r")
         #LER A PA DA LOJA TOTAL
         def loja():
             cont = 0
-            with open("clb.txt") as dados:
+            with open(r"txt//clb.txt") as dados:
                 linha = dados.readlines()
             for i in linha:
                 cont += 1
@@ -93,5 +93,5 @@ class PA():
                         ref()
                         self.ins()
         loja()
-        self.planilha.save('parcial.xlsx')
+        self.planilha.save(r'pln//parcial.xlsx')
         self.planilha.close()

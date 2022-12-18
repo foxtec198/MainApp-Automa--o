@@ -4,10 +4,10 @@ import os
 
 class VJ():
     def __init__(self):
-        self.conn = connect("vj.db")
+        self.conn = connect(r"database//vj.db")
         self.c = self.conn.cursor()
-        self.arquivo = open("vj.txt")
-        self.planilha = lw("vj.xlsx")
+        self.arquivo = open(r"txt//vj.txt")
+        self.planilha = lw(r"pln//vj.xlsx")
         self.ws = self.planilha.active
         # Vars
         self.valorE = 0
@@ -87,5 +87,5 @@ class VJ():
                         self.soma += self.valor
                         self.ins()
                         
-        self.planilha.save("vj.xlsx")
+        self.planilha.save(r"pln//vj.xlsx")
         self.planilha.close()

@@ -5,7 +5,7 @@ import time, os
 #Carregando Data
 dia = time.strftime("DATA %d/%m/%Y")
 #Carregando e Ativando xlsx
-planilha = load_workbook('horaxhora.xlsx')
+planilha = load_workbook(r'pln//horaxhora.xlsx')
 ws = planilha.active
 
 
@@ -28,7 +28,6 @@ class DCO():
         self.metas()
     def metas(self):
         m = Metas()
-        m.grupo()
         ws['C7'] = m.blz
         ws['C8'] = m.cba
         ws['C9'] = m.tec
@@ -43,7 +42,7 @@ class DCO():
 
     def ler(self, tdco):
         #Ler dados
-        with open('texto.txt') as t:
+        with open(r'txt//texto.txt') as t:
             self.dados = t.readlines()
 
         #Lendo linha por DCO
@@ -248,5 +247,5 @@ def mainHxh():
     bskt()
     rel()
     inserir()
-    planilha.save("horaxhora.xlsx")
-    os.system("horaxhora.xlsx")
+    planilha.save(r"pln//horaxhora.xlsx")
+    planilha.close()
