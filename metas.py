@@ -21,11 +21,11 @@ class Metas():
         self.biju = float()
         self.rel = float()
         try:
-            self.planilha = lw(f"metas atualizadas//metas{mes}.xlsx")
+            self.planilha = lw(f"metas\\metas.xlsx")
             self.ws = self.planilha.active
             self.grupo()
         except:
-            self.AA()
+            pass
 
     def grupo(self):
         for i in range(4, 5000):
@@ -35,7 +35,7 @@ class Metas():
             grupo = self.ws[f"C{i}"].value
             diaP = str(diaP)
             if diaP == dia:
-                if fl == 'L062':
+                if fl == self.fl:
                     if grupo == 'Basket':
                         self.basket = valor
                         self.soma += valor
@@ -66,48 +66,3 @@ class Metas():
                     if grupo == 'Relógios':
                         self.rel = valor
                         self.soma += valor
-                        
-    def AA(self):
-        ano = int(st('%Y'))
-        ly = st(f'{ano}%m')
-        ca = st('%m-%d')
-        plnAA = lw(f'metas//metas{ly}.xlsx')
-        wa = plnAA.active
-
-        for i in range(4, 600):
-            diaA = wa[f'B{i}'].value
-            valor = wa[f'C{i}'].value
-            dco = wa[f'D{i}'].value
-            if diaA != None:
-                if ca in diaA:
-                    if dco == 'Basket':
-                        self.basket = valor
-                        self.soma += valor
-                    if dco == 'Beleza':
-                        self.blz = valor
-                        self.soma += valor
-                    if dco == 'Calçados':
-                        self.cba = valor
-                        self.soma += valor
-                    if dco == 'Eletrônicos':
-                        self.tec = valor
-                        self.soma += valor
-                    if dco == 'Feminino':
-                        self.fem = valor
-                        self.soma += valor
-                    if dco == 'Infantil':
-                        self.inf = valor
-                        self.soma += valor
-                    if dco == 'Masculino':
-                        self.masc = valor
-                        self.soma += valor
-                    if dco == 'Moda Casa':
-                        self.mdc = valor
-                        self.soma += valor
-                    if dco == 'Óculos e Bijuteria':
-                        self.biju = valor
-                        self.soma += valor
-                    if dco == 'Relógios':
-                        self.rel = valor
-                        self.soma += valor
-Metas()

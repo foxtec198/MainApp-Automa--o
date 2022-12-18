@@ -9,9 +9,9 @@ mm = st('%Y%m')
 ly = int(st('%Y')) - 1
 ly = st(f'{ly}%m')
 try:
-    pln = lw(f"metas atualizadas//metas{mm}.xlsx")
+    pln = lw(f"metas//metas.xlsx")
 except:
-    msg.showinfo('RCHLO', 'Metas não atualizadas')
+    msg.showinfo('Automação', 'Metas não atualizadas')
     
     
 ws = pln.active 
@@ -129,4 +129,4 @@ L393: R${l393},00 //
         a.write(text)
         a.close()
         os.system('cd txt && estore.txt')
-es().iniciar()
+

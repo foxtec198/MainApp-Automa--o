@@ -8,6 +8,7 @@ from metas import Metas
 from vj import VJ
 from pa import PA
 from hxh import mainHxh
+from estore import es
 
 from functools import partial
 import os
@@ -17,16 +18,34 @@ class App():
     def __init__(self):
         # Vars
         self.win = Tk()
-        self.conn = connect("dados.db")
+        self.conn = connect("db\\dados.db")
         self.c = self.conn.cursor()
-        #self.caulcarGrafico()
         self.bg = "#333"
         self.nome = 'Undefined'
         self.dia = int(st("%d"))
-        m = Metas()
-        self.metaLoja = m.soma
+        self.fls = [
+            "L025",
+            "L051",
+            "L054",
+            "L056",
+            "L057",
+            "L059",
+            "L061",
+            "L062",
+            "L194",
+            "L201",
+            "L287",
+            "L306",
+            "L313",
+            "L316",
+            "L326",
+            "L391",
+            "L393"
+            ]
+        self.metasFl = Metas()
+        self.metaLoja = self.metasFl.soma
         
-        # callback
+        # callback's
         self.config_win()
         self.widget()
         self.inst()
@@ -51,12 +70,10 @@ class App():
         self.esFrame = Frame(win, bg = self.bg, width = 250, height = 80)
         
         self.txtFrame = Frame(win, bg = self.bg, width= 550, height= 540)
-        self.graphFrame = Frame(win, bg = self.bg, width = 500, height = 540)
-        # x = width
-        # y = height
+        self.setFrame = Frame(win, bg = self.bg, width = 500, height = 540)
 
-        pimg = PhotoImage
         # IMAGENS
+        pimg = PhotoImage
         self.imglogin = pimg(file =r"img\\man.png")
         self.paImg = pimg(file = r"img\\pa.png")
         self.hxhImg = pimg(file = r"img\\hxh.png")
@@ -75,8 +92,8 @@ class App():
             bg = 'black', fg = 'grey'
             ).place(x=690, y= 670, anchor = 'center')
         
-        # Login Vermelho: d90429
 
+        # Login Vermelho: d90429
         self.lblImgLogin = Label(
             self.loginFrame,
             image = self.imglogin,
@@ -98,8 +115,6 @@ class App():
             bg = self.bg,
             fg = "white"
             )
-
-        self.atualizar()
 
         self.lblMeta = Label(
             self.loginFrame,
@@ -147,35 +162,27 @@ class App():
             fg = "GhostWhite"
             ).place(x = 280, y = 15 , anchor='center' )
 
-        self.btnClear = Button(
-            self.txtFrame,
-            text = 'Limpar',
-            bg = '#d90429',
-            fg = 'white',
-            width= 5,
-            height=1,
-            activebackground='#333',
-            command = self.cls1
-            )
-
         # HxH
         self.btnHxh = Button(
             self.hxhFrame,
-            text = 'HoraXhora',
+            text = 'Comercial',
             image = self.hxhImg,
             width= '64',
             bg = self.bg,
             borderwidth = 0,
             activebackground= self.bg,
-            command = self.hxh
+            command = partial(self.hxh, 1)
             )
 
-        self.lblHxh = Label(
+        self.lblHxh = Button(
             self.hxhFrame,
             text = 'Comercial',
             font = 'monospace 14 bold',
+            borderwidth=0,
+            activebackground = self.bg,
             bg = self.bg,
-            fg = 'white'
+            fg = 'white',
+            command = partial(self.hxh, 1)
             )
 
         self.btnPA = Button(
@@ -189,12 +196,15 @@ class App():
             command = self.pa
             )
             
-        self.lblPA = Label(
+        self.lblPA = Button(
             self.paFrame, 
             text = 'Participação', 
-            font = 'monospace 14 bold', 
+            font = 'monospace 14 bold',
+            borderwidth=0,
+            activebackground = self.bg,
             bg = self.bg, 
-            fg = 'white'
+            fg = 'white',
+            command = self.pa
             )
         
         self.btnVJ= Button(
@@ -208,12 +218,15 @@ class App():
             command = self.vj
             )
 
-        self.lblVJ = Label(
+        self.lblVJ = Button(
             self.vjFrame, 
             text = 'Vendas c/ Juros', 
-            font = 'monospace 14 bold', 
+            font = 'monospace 14 bold',
+            borderwidth=0,
+            activebackground = self.bg, 
             bg = self.bg, 
-            fg = 'white'
+            fg = 'white',
+            command = self.vj 
             )
 
         self.btnCart = Button(
@@ -224,19 +237,42 @@ class App():
             bg = self.bg, 
             borderwidth = 0, 
             activebackground= self.bg, 
-            command = self.estore
+            command = partial(self.estore, 1)
             )
 
-        self.lblEs = Label(
+        self.lblEs = Button(
             self.esFrame, 
             text = 'E-store', 
-            font = 'monospace 14 bold', 
+            font = 'monospace 14 bold',
+            borderwidth=0,
+            activebackground = self.bg, 
             bg = self.bg, 
-            fg = 'white'
+            fg = 'white',
+            command = partial(self.estore, 1)
             )
-
         
-    def inst(self): # Instanciar 
+        # SET FRAME
+        self.ttCombo = Label(
+            self.setFrame,
+            text='Escolha sua Filial:',
+            bg = self.bg,
+            fg = 'White',
+            font='Arial 12 bold'
+        )
+        self.combo = ttk.Combobox(
+            self.setFrame,
+            values=self.fls
+        )
+        self.combo.set('L062')
+        self.combo['state'] = 'readonly'
+
+        # UpDate and Bind
+        self.win.bind('<F5>', self.hxh)
+        self.win.bind('<F12>', self.estore)
+        self.atualizarM()
+        self.atualizar()
+
+    def inst(self):
         # Frame
         self.loginFrame.place(x= 10, y = 10)
         
@@ -246,7 +282,7 @@ class App():
         self.paFrame.place(x=1030, y = 10)
         self.txtFrame.place(x = 230, y = 101 )
         
-        self.graphFrame.place(x = 790, y = 101)
+        self.setFrame.place(x = 790, y = 101)
         
         # Login
         self.lblImgLogin.place(x = 25, y = 10)  
@@ -258,7 +294,6 @@ class App():
         
         # Text
         self.txt.place(x=10, y=30)
-        self.btnClear.place(x=490, y = 2)
 
         # DP
         self.btnHxh.place(x = 10, y = 10)
@@ -269,7 +304,11 @@ class App():
         self.lblVJ.place(x = 170, y = 40, anchor = 'center')
         self.btnCart.place(x = 10, y = 10)
         self.lblEs.place(x = 170, y = 40, anchor = 'center')
-        	
+        
+        # SET FRAME
+        self.ttCombo.place(x = 10, y = 20)
+        self.combo.place(x = 10, y = 50)
+
     # Functions
     def msg(self, tp, msg):
         if tp == 1:
@@ -279,16 +318,18 @@ class App():
         elif tp == 3:
             messagebox.showwarning('Auto Acompanhamento', msg)
 
+    def atualizarM(self):
+        self.metasFl = Metas
+        self.metasFl.fl = self.combo.get()
+        self.metasFl = Metas()
+        self.metaLoja = self.metasFl.soma
+        self.lblHora.after(3000, self.atualizarM)
+
     def atualizar(self):
         self.hora = st("%H:%M:%S - %d/%m/%Y")
         self.lblHora["text"] = self.hora
-        self.lblHora.after(100, self.atualizar)
-
-    def cls(self, event):
-        self.txt.delete("1.0", END)
-    
-    def cls1(self):
-        self.txt.delete("1.0", END)
+        self.lblMeta['text'] = f"Meta Loja: R$ {self.metaLoja:.2f}"
+        self.lblHora.after(1000, self.atualizar)
 
     def login(self):
         win2 = Tk()
@@ -302,7 +343,7 @@ class App():
             self.userg = self.user.get()
             self.senhag = self.senha.get()
             user = self.c.execute(f"SELECT nome FROM user WHERE matricula = '{self.userg}' ").fetchone()
-            senha = self.c.execute(f"SELECT senha FROM user WHERE senha = '{self.senhag}' ").fetchone()
+            senha = self.c.execute(f"SELECT senha FROM user WHERE matricula = '{self.userg}' ").fetchone()
             if senha != None:
                 senha = senha[0]
 
@@ -313,9 +354,9 @@ class App():
                 self.lblUser["text"] = f'👤 {user}'
                 self.msg(1, "Login realizado com sucesso!")
                 win2.destroy()
-                
             else:
                 self.msg(2, 'Senha ou Matricula Incorreta!')
+            
             self.nome = user
 
         
@@ -326,54 +367,10 @@ class App():
         self.senha = Entry(win2, font = 'arial 12 bold', show = '*', justify='center')
         self.senha.pack(anchor="center")
         Button(win2, text = "Login", font = "arial 10", command= cons).pack(pady = 10)
+
         win2.bind('<Return>', cons)
         win2.mainloop()
-    
-    def addUser(self):
-        c2 = connect('vj.db')
-        cv = c2.cursor()
-        def add(event):
-            nome = nomeCad.get().upper()
-            mat = matCad.get()
-            #try:
-            cv.execute(f'INSERT INTO opDB(matricula, nome) VALUES ("{mat}","{nome}")')
-            c2.commit()
-            nome = nome.split()
-            nome = nome[0]
-            self.msg(1, f'{nome} adicionado com sucesso')
-            winCad.destroy() 
-            
-        if self.nome != 'Undefined':
-            winCad = Tk()
-            winCad.iconbitmap("img/icon.ico")        
-            winCad.geometry("250x400")
-            winCad['bg'] = self.bg
-            winCad.resizable(width=False, height=False)
-            winCad.title("CADASTRO")
-            
-            Label(winCad,
-                  text = 'Nome',
-                  bg = self.bg,
-                  fg = 'white',
-                  font = 'Arial 12').pack()
-            nomeCad = Entry(winCad)
-            nomeCad.pack()
-            Label(winCad,
-                  text = 'Matricula',
-                  bg = self.bg,
-                  fg = 'white',
-                  font = 'Arial 12').pack()
-            matCad = Entry(winCad)
-            matCad.pack()
-            matCad.bind('<Return>',add)
-            Button(winCad,
-                   text = 'Cadastrar',
-                   command = partial(add, 1)).pack()
-            
-            winCad.mainloop()
-        else:
-            self.msg(3, "Realize Login Primeiro!!")
-    
+        
     def logout(self):
         if self.nome != 'Undefined':
             self.lblUser['text'] = 'Undefined'
@@ -382,17 +379,18 @@ class App():
         else:
             self.msg(1, 'Realize Login !!!')
 
-    #+=======================CAL BACK=============================
+    #========================CALL=BACK=============================
 
-    def hxh(self):
+    def hxh(self, event):
         txt = self.txt.get('1.0', END)
         arquivo = open('texto.txt', 'w')
         arquivo.write(txt)
         arquivo.close()
         
-        self.msg(1, 'Abrindo parcial')
+        self.msg(1, 'Realizando parcial')
         mainHxh()
-     
+        os.system('cd pln && horaxhora.xlsx')
+
     def pa(self):
         txt = self.txt.get('1.0', END)
         arquivo = open('clb.txt', 'w')
@@ -400,8 +398,8 @@ class App():
         arquivo.close()
         
         PA().cons()
-        self.msg(1, 'Parcial realizado com sucesso!')
-        os.system('parcial.xlsx')
+        self.msg(1, 'Realizando Parcial')
+        os.system('cd pln &&parcial.xlsx')
 
     def vj(self):
         txt = self.txt.get('1.0', END)
@@ -409,10 +407,14 @@ class App():
         arquivo.write(txt)
         arquivo.close()
         VJ().code()
-        self.msg(1, 'Abrido parcial')
+        self.msg(1, 'Realizando Parcial')
         os.system('vj.xlsx')
         
-    def estore(self):
-        self.msg(1, 'Abrindo estore')
-        os.system('estore.py')  
+    def estore(self, event):
+        if self.nome != 'Undefined':
+            self.msg(1, 'Abrindo E-Store')
+            os.system('cd pln && estore.xlsx')
+            es().iniciar()
+        else:
+            self.msg(1,'Realize Login!')
 App()
