@@ -19,7 +19,7 @@ class App():
         self.win = Tk()
         self.conn = connect("dados.db")
         self.c = self.conn.cursor()
-        self.caulcarGrafico()
+        #self.caulcarGrafico()
         self.bg = "#333"
         self.nome = 'Undefined'
         self.dia = int(st("%d"))
@@ -65,9 +65,6 @@ class App():
         self.userImg = pimg(file = r"img\\user.png")
         self.setImg = pimg(file = r"img\\set.png")
         self.cartImg = pimg(file = r"img\\cart.png")
-        # Graficos
-        self.g1 = pimg(file = r"img\\meta.png")
-        self.g2 = pimg(file = r"img\\real.png")
 
         # DIREITOS AUTORAIS ----------------------------------------------------------------------------------------
         self.ms = 'Deselvolvido por TecnoBreve Enterprise, Direitos autorais reservados a mesma © Londrina 2022'
@@ -175,7 +172,7 @@ class App():
 
         self.lblHxh = Label(
             self.hxhFrame,
-            text = 'Parcial \nHora X Hora',
+            text = 'Comercial',
             font = 'monospace 14 bold',
             bg = self.bg,
             fg = 'white'
@@ -194,7 +191,7 @@ class App():
             
         self.lblPA = Label(
             self.paFrame, 
-            text = 'Parcial \nParticipação', 
+            text = 'Participação', 
             font = 'monospace 14 bold', 
             bg = self.bg, 
             fg = 'white'
@@ -213,7 +210,7 @@ class App():
 
         self.lblVJ = Label(
             self.vjFrame, 
-            text = 'Parcial \nVendas com Juros', 
+            text = 'Vendas c/ Juros', 
             font = 'monospace 14 bold', 
             bg = self.bg, 
             fg = 'white'
@@ -238,28 +235,15 @@ class App():
             fg = 'white'
             )
 
-        # GRAPH FRAME
-        fgg = self.graphFrame
-        self.gp1 = Label(
-            fgg, 
-            image = self.g1, 
-            bg = self.bg
-            )
-
-        self.gp2 = Label(
-            fgg, 
-            image = self.g2, 
-            bg = self.bg
-            )
         
     def inst(self): # Instanciar 
         # Frame
         self.loginFrame.place(x= 10, y = 10)
         
         self.hxhFrame.place(x= 230, y= 10)
-        self.paFrame.place(x= 500, y = 10)
-        self.vjFrame.place(x = 770, y = 10)
-        self.esFrame.place(x=1040, y = 10)
+        self.esFrame.place(x= 500, y = 10)
+        self.vjFrame.place(x = 760, y = 10)
+        self.paFrame.place(x=1030, y = 10)
         self.txtFrame.place(x = 230, y = 101 )
         
         self.graphFrame.place(x = 790, y = 101)
@@ -285,10 +269,6 @@ class App():
         self.lblVJ.place(x = 170, y = 40, anchor = 'center')
         self.btnCart.place(x = 10, y = 10)
         self.lblEs.place(x = 170, y = 40, anchor = 'center')
-        
-        # FG
-        self.gp1.place(x = 0 , y = 10)
-        self.gp2.place(x = 0, y = 300)
         	
     # Functions
     def msg(self, tp, msg):
@@ -299,48 +279,6 @@ class App():
         elif tp == 3:
             messagebox.showwarning('Auto Acompanhamento', msg)
 
-    # CALLBACKS FUNCTIONS EXT ============================+
-    def hxh(self):
-        txt = self.txt.get('1.0', END)
-        arquivo = open('texto.txt', 'w')
-        arquivo.write(txt)
-        arquivo.close()
-        
-        self.msg(1, 'Abrindo parcial')
-        mainHxh()
-        self.atug()
-     
-    def pa(self):
-        txt = self.txt.get('1.0', END)
-        arquivo = open('clb.txt', 'w')
-        arquivo.write(txt)
-        arquivo.close()
-        
-        PA().cons()
-        self.msg(1, 'Parcial realizado com sucesso!')
-        os.system('parcial.xlsx')
-
-    def vj(self):
-        txt = self.txt.get('1.0', END)
-        arquivo = open('vj.txt', 'w')
-        arquivo.write(txt)
-        arquivo.close()
-        
-        VJ().code()
-        self.msg(1, 'Abrido parcial')
-        os.system('vj.xlsx')
-        
-    def estore(self):
-        self.msg(1, 'Abrindo estore')
-        os.system('estore.py')
-        
-    #+====================================================+
-    def atug(self):
-        self.caulcarGrafico()
-        self.g2 = PhotoImage(file = r"img\\real.png")
-        self.gp2 = Label(self.graphFrame, image = self.g2, bg = self.bg)
-        self.gp2.place(x = 0, y = 300)
-        
     def atualizar(self):
         self.hora = st("%H:%M:%S - %d/%m/%Y")
         self.lblHora["text"] = self.hora
@@ -390,12 +328,6 @@ class App():
         Button(win2, text = "Login", font = "arial 10", command= cons).pack(pady = 10)
         win2.bind('<Return>', cons)
         win2.mainloop()
-        
-    def settings(self):
-        if self.nome != 'Undefined':
-            pass
-        else:
-            self.msg(3, "Realize Login Primeiro!!")
     
     def addUser(self):
         c2 = connect('vj.db')
@@ -409,10 +341,7 @@ class App():
             nome = nome.split()
             nome = nome[0]
             self.msg(1, f'{nome} adicionado com sucesso')
-            winCad.destroy()
-            #except:
-                #self.msg(2, 'Erro!')
-            
+            winCad.destroy() 
             
         if self.nome != 'Undefined':
             winCad = Tk()
@@ -452,63 +381,41 @@ class App():
             self.msg(1, 'Lougout realizado com sucesso!!')
         else:
             self.msg(1, 'Realize Login !!!')
-            
-    def caulcarGrafico(self):
-        dia = int(st("%d"))
-        self.lhr = st('%H:%M')
-        pln = lw('metas.xlsx')
-        pln2 = lw('horaxhora.xlsx')
-        ws = pln.active
-        ws2 = pln2.active
-        vlr = []
-        
-        dcos = []
-        for i in range(1, 6000):
-            diaP = ws[f'A{i}'].value
-            loja = ws[f'B{i}'].value
-            dco = ws[f'C{i}'].value
-            valor = ws[f'D{i}'].value
-            if diaP != None:
-                if loja == 'L062':
-                    if diaP == dia:
-                        dcos.append(dco)
-                        vlr.append(valor)
-                        
-        dep = []
-        for d in dcos:
-            dco = d[:4]
-            dep.append(dco)
-           
-        plt.style.use('ggplot')
-        plt.figure(figsize = (5, 2), facecolor = '#333')
-        plt.title('Metas Financeiras 062', fontsize = 16, fontweight='bold', color = 'white')
-        meta = plt.subplot()
-        meta.bar(dep, vlr)
-        meta.set_facecolor('#333')
-        plt.savefig('img\\meta.png')
-        plt.close()
 
-        y_pos = []
-        deps = ['Beleza', 'Calça', 'Tecno', 'Fem', 'Inf', 'Masc', 'Moda C', 'Óculos', 'Basket', 'Relóg']
-            
-        for i in range(1,11):
-            y_pos.append(i)
-            
-        realizado = []
-        for i in range(7, 17):
-            valor = ws2[f'E{i}'].value
-            realizado.append(valor)
-            
-        plt.style.use('ggplot')
-        plt.figure(figsize = (5, 2), facecolor = '#333')
-        plt.title(f'Realizado {self.lhr}', fontsize = 16, fontweight='bold', color = 'white')
+    #+=======================CAL BACK=============================
+
+    def hxh(self):
+        txt = self.txt.get('1.0', END)
+        arquivo = open('texto.txt', 'w')
+        arquivo.write(txt)
+        arquivo.close()
         
-        rel = plt.subplot()
-        rel.barh(y_pos, realizado)
-        rel.set_yticks(y_pos, deps)
+        self.msg(1, 'Abrindo parcial')
+        mainHxh()
+     
+    def pa(self):
+        txt = self.txt.get('1.0', END)
+        arquivo = open('clb.txt', 'w')
+        arquivo.write(txt)
+        arquivo.close()
         
-        rel.set_facecolor('#333')
-        plt.savefig('img\\real.png')
-        plt.close()
+        PA().cons()
+        self.msg(1, 'Parcial realizado com sucesso!')
+        os.system('parcial.xlsx')
+
+    def vj(self):
+        txt = self.txt.get('1.0', END)
+        arquivo = open('vj.txt', 'w')
+        arquivo.write(txt)
+        arquivo.close()
         
+        VJ().code()
+        self.msg(1, 'Abrido parcial')
+        os.system('vj.xlsx')
+        
+    def estore(self):
+        self.msg(1, 'Abrindo estore')
+        os.system('estore.py')
+        
+      
 App()
