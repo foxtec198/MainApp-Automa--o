@@ -412,8 +412,13 @@ class App():
                 add.destroy()
             else:
                 self.msg(2, 'Dados Inválidos')
-
+        
         add = Toplevel()
+        if self.nome == 'Undefined':
+            add.destroy()
+            self.msg(3, 'Realize Login!')
+        else:
+            pass
         add.geometry('400x400')
         add.resizable(width=False, height=False)
         add['bg'] = self.bg
