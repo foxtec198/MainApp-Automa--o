@@ -23,25 +23,7 @@ class App():
         self.bg = "#333"
         self.nome = 'Undefined'
         self.dia = int(st("%d"))
-        self.fls = [
-            "L025",
-            "L051",
-            "L054",
-            "L056",
-            "L057",
-            "L059",
-            "L061",
-            "L062",
-            "L194",
-            "L201",
-            "L287",
-            "L306",
-            "L313",
-            "L316",
-            "L326",
-            "L391",
-            "L393"
-            ]
+        self.fls = ["L025","L051","L054","L056","L057","L059","L061","L062","L194","L201","L287","L306","L313","L316","L326","L391","L393"]
         self.metasFl = Metas()
         self.metaLoja = self.metasFl.soma
         
@@ -505,7 +487,7 @@ class App():
 
     def teste(self):
         print(os.listdir)
-        os.system('Explorer Downloads')
+        os.system('cd metas && explorer metas')
 
 #========================CALL=BACK=============================
 
