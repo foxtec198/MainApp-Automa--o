@@ -1,9 +1,7 @@
-from openpyxl import load_workbook as lw
 from sqlite3 import connect
 from tkinter import *
 from tkinter import ttk, messagebox, PhotoImage, filedialog
 from time import strftime as st
-from PIL import Image 
 
 from metas import Metas
 from vj import VJ
@@ -12,8 +10,7 @@ from hxh import mainHxh
 from estore import es
 
 from functools import partial
-import os
-import matplotlib.pyplot as plt
+
 
 class App():
     def __init__(self):
@@ -27,6 +24,7 @@ class App():
         self.fls = ["L025","L051","L054","L056","L057","L059","L061","L062","L194","L201","L287","L306","L313","L316","L326","L391","L393"]
         self.metasFl = Metas()
         self.metaLoja = self.metasFl.soma
+        self.fla = open('txt\\fl.txt').read()
         
         # callback's
         self.config_win()
@@ -60,12 +58,14 @@ class App():
         self.imglogin = pimg(file =r"img\\man.png")
         self.paImg = pimg(file = r"img\\pa.png")
         self.hxhImg = pimg(file = r"img\\hxh.png")
-
         self.vjImg = pimg(file = r"img\\vj.png")
         self.userImg = pimg(file = r"img\\user.png")
         self.userImg = pimg(file = r"img\\user.png")
         self.cartImg = pimg(file = r"img\\cart.png")
-        self.powerBI = pimg(file = r'img\\pow.png')
+        self.upUser = pimg(file=r'img\\update.png')
+        self.delUser = pimg(file=r'img\\del.png')
+        self.darkImg = pimg(file=r'img\\dark.png')
+
 
         # DIREITOS AUTORAIS ----------------------------------------------------------------------------------------
         self.ms = 'Deselvolvido por TecnoBreve Enterprise, Direitos autorais reservados a mesma © Londrina 2022'
@@ -76,7 +76,6 @@ class App():
             bg = 'black', fg = 'grey'
             ).place(x=690, y= 660, anchor = 'center')
         
-
         # Login Vermelho: d90429
         self.lblImgLogin = Label(
             self.loginFrame,
@@ -133,6 +132,7 @@ class App():
             text='Escolha sua Filial:',
             bg = '#d90429',
             activebackground = '#d90429',
+            activeforeground='white',
             fg = 'white',
             borderwidth = 0,
             width = 200,
@@ -264,7 +264,6 @@ class App():
             bg = self.bg,
             font = 'Arial 12 bold'
         )
-
         self.btnAdd = Button(
             self.setFrame,
             image = self.userImg,
@@ -273,6 +272,52 @@ class App():
             borderwidth = 0,
             command = self.Add
         )
+
+        self.ttUp = Label(
+            self.setFrame,
+            text = 'Atualizar Usuário:',
+            fg = 'White',
+            bg = self.bg,
+            font = 'Arial 12 bold'
+        )
+        self.btnUp = Button(
+            self.setFrame,
+            image = self.upUser,
+            bg = self.bg,
+            activebackground = self.bg,
+            borderwidth = 0,
+        )
+
+        self.ttDel = Label(
+            self.setFrame,
+            text = 'Excluir Usuário:',
+            fg = 'White',
+            bg = self.bg,
+            font = 'Arial 12 bold'
+        )
+        self.btnDel = Button(
+            self.setFrame,
+            image = self.delUser,
+            bg = self.bg,
+            activebackground = self.bg,
+            borderwidth = 0,
+        )
+
+        self.ttDark = Label(
+            self.setFrame,
+            text = 'Modo Claro:',
+            fg = 'White',
+            bg = self.bg,
+            font = 'Arial 12 bold'
+        )
+        self.btnDark = Button(
+            self.setFrame,
+            image = self.darkImg,
+            bg = self.bg,
+            activebackground = self.bg,
+            borderwidth = 0,
+        )
+        
         self.ttArq = Label(
             self.setFrame,
             text = '''
@@ -285,14 +330,11 @@ class App():
             font = 'Arial 11 bold'
         )
         self.btnArq = Button(
-            self.setFrame,
-            image = self.powerBI, 
+            self.setFrame, 
             text = 'Choose File',
             command = self.dirMt
         )
-        fla = open('txt\\fl.txt').read()
-        self.combo.set(fla)
-        self.combo['state'] = 'readonly'
+        
         # UpDate and Bind
         self.win.bind('<F5>', self.hxh)
         self.win.bind('<F12>', self.estore)
@@ -319,9 +361,11 @@ class App():
         self.btnLogin.place(x = 100, y = 600, anchor="center")
         self.btnLogout.place(x = 100, y = 640, anchor="center")
 
+        self.combo.set(self.fla)
+        self.combo['state'] = 'readonly'
         self.ttCombo.place(x = 100, y = 255, anchor = 'center')
         self.combo.place(x = 105, y = 280, anchor = 'center')
-
+        
         # Text
         self.txt.place(x=10, y=30)
 
@@ -336,9 +380,18 @@ class App():
         self.lblEs.place(x = 170, y = 40, anchor = 'center')
         
         # SET FRAME
-        self.ttAdd.place(x = 300, y = 20, anchor = 'center')
-        self.btnAdd.place(x = 300, y = 70, anchor = 'center')
+        self.btnAdd.place(x = 125, y = 40, anchor = 'center')
+        self.ttAdd.place(x = 125, y = 90, anchor = 'center')
 
+        self.btnUp.place(x = 350, y = 40, anchor = 'center')
+        self.ttUp.place(x = 350, y = 90, anchor = 'center')
+
+        self.btnDel.place(x= 125, y= 200, anchor = 'center')
+        self.ttDel.place(x= 125, y= 250, anchor = 'center')
+        
+        self.btnDark.place(x= 350, y= 200, anchor = 'center')
+        self.ttDark.place(x= 350, y= 250, anchor = 'center')
+        
         self.ttArq.place(x = 170, y = 500, anchor = 'center')
         self.btnArq.place(x = 450, y = 500, anchor = 'center')
 
@@ -519,6 +572,87 @@ class App():
             a.close()
         else:
             self.msg(2, 'Realize Login!')
+
+    def Update(self):
+        update = Toplevel()
+        if self.nome == 'Undefined':
+            update.destroy()
+            self.msg(3, 'Realize Login!')
+        else:
+            pass
+        update.geometry('400x400')
+        update.resizable(width=False, height=False)
+        update['bg'] = self.bg
+
+        tti = Label(
+            update,
+            image = self.upUser,
+            borderwidth = 0,
+            bg = self.bg,
+            activebackground = self.bg
+        )
+        tt = Label(
+            update,
+            text='Atualizar Usuário!',
+            bg = self.bg,
+            fg = 'GhostWhite',
+            font = 'Fantasy 15 bold'
+        )
+        nomelbl = Label(
+            update,
+            text = 'Nome:',
+            bg = self.bg,
+            fg = 'White',
+            font = 'Arial 12 bold'
+            )
+        nome = Entry(
+            add,
+            bg = 'Black',
+            fg = 'white',
+            font = 'Arial 12 bold'
+            )
+        matlbl = Label(
+            add,
+            text = 'Matricula:',
+            bg = self.bg,
+            fg = 'White',
+            font = 'Arial 12 bold'
+            )
+        mat = Entry(
+            update,
+            bg = 'Black',
+            fg = 'white',
+            font = 'Arial 12 bold'
+            )
+        senhalbl = Label(
+            update,
+            text = 'Senha:',
+            bg = self.bg,
+            fg = 'White',
+            font = 'Arial 12 bold'
+            )
+        senha = Entry(
+            update,
+            bg = 'Black',
+            fg = 'white',
+            font = 'Arial 12 bold',
+            show = '*'
+            )
+        btnEnviar = Button(
+            update,
+            text = 'Adicionar!',
+            bg = '#d90429',
+            fg = 'White',
+            font ='Arial 14 bold',
+            command = partial(enviar, 1)
+        )
+
+        tti.place(x = 180, y, anchor='center')
+        tt.place(x = , y, anchor='center')
+
+
+    def Del(self):
+        pass
 #========================CALL=BACK=============================
 
     def hxh(self, event):
@@ -529,7 +663,7 @@ class App():
         
         self.msg(1, 'Realizando parcial')
         mainHxh()
-        os.system('cd pln && horaxhora.xlsx && quit')
+        os.system('cd pln && horaxhora.xlsx')
 
     def pa(self):
         txt = self.txt.get('1.0', END)
@@ -548,7 +682,7 @@ class App():
         arquivo.close()
         VJ().code()
         self.msg(1, 'Realizando Parcial')
-        os.system('vj.xlsx')
+        os.system('cd pln && vj.xlsx')
         
     def estore(self, event):
         if self.nome != 'Undefined':
