@@ -9,6 +9,7 @@ from pa import PA
 from hxh import mainHxh
 from estore import es
 
+import os
 from functools import partial
 
 
@@ -286,6 +287,7 @@ class App():
             bg = self.bg,
             activebackground = self.bg,
             borderwidth = 0,
+            command = self.Update
         )
 
         self.ttDel = Label(
@@ -301,6 +303,7 @@ class App():
             bg = self.bg,
             activebackground = self.bg,
             borderwidth = 0,
+            command = self.Del
         )
 
         self.ttDark = Label(
@@ -380,17 +383,17 @@ class App():
         self.lblEs.place(x = 170, y = 40, anchor = 'center')
         
         # SET FRAME
-        self.btnAdd.place(x = 125, y = 40, anchor = 'center')
-        self.ttAdd.place(x = 125, y = 90, anchor = 'center')
+        self.btnAdd.place(x = 125, y = 100, anchor = 'center')
+        self.ttAdd.place(x = 125, y = 150, anchor = 'center')
 
-        self.btnUp.place(x = 350, y = 40, anchor = 'center')
-        self.ttUp.place(x = 350, y = 90, anchor = 'center')
+        self.btnUp.place(x = 350, y = 100, anchor = 'center')
+        self.ttUp.place(x = 350, y = 150, anchor = 'center')
 
-        self.btnDel.place(x= 125, y= 200, anchor = 'center')
-        self.ttDel.place(x= 125, y= 250, anchor = 'center')
+        self.btnDel.place(x= 125, y= 300, anchor = 'center')
+        self.ttDel.place(x= 125, y= 350, anchor = 'center')
         
-        self.btnDark.place(x= 350, y= 200, anchor = 'center')
-        self.ttDark.place(x= 350, y= 250, anchor = 'center')
+        self.btnDark.place(x= 350, y= 300, anchor = 'center')
+        self.ttDark.place(x= 350, y= 350, anchor = 'center')
         
         self.ttArq.place(x = 170, y = 500, anchor = 'center')
         self.btnArq.place(x = 450, y = 500, anchor = 'center')
@@ -574,6 +577,13 @@ class App():
             self.msg(2, 'Realize Login!')
 
     def Update(self):
+        def up(event):
+            matdb = mat.get()
+            senhadb = senha.get()
+            nomedb = nome.get()
+            if matdb != '':
+                self.c.execute(f'UPDATE user SET nome = "{nomedb}", senha = "{senhadb}" WHERE matricula = "{matdb}" ')
+                self.msg(1, 'Atualizado com sucesso!!')
         update = Toplevel()
         if self.nome == 'Undefined':
             update.destroy()
@@ -606,14 +616,14 @@ class App():
             font = 'Arial 12 bold'
             )
         nome = Entry(
-            add,
+            update,
             bg = 'Black',
             fg = 'white',
             font = 'Arial 12 bold'
             )
         matlbl = Label(
-            add,
-            text = 'Matricula:',
+            update,
+            text = 'Matricula(não pode ser alterada!):',
             bg = self.bg,
             fg = 'White',
             font = 'Arial 12 bold'
@@ -640,19 +650,88 @@ class App():
             )
         btnEnviar = Button(
             update,
-            text = 'Adicionar!',
+            text = 'Atualizar!!',
             bg = '#d90429',
             fg = 'White',
             font ='Arial 14 bold',
-            command = partial(enviar, 1)
+            command = partial(up, 1)
         )
 
-        tti.place(x = 180, y, anchor='center')
-        tt.place(x = , y, anchor='center')
-
+        tti.place(x = 60, y = 40, anchor = 'center')
+        tt.place(x = 220, y = 40, anchor = 'center')
+        nomelbl.place(x = 200, y = 110, anchor = 'center')
+        nome.place(x = 200, y = 140, anchor = 'center')
+        matlbl.place(x = 200, y = 170, anchor = 'center')
+        mat.place(x = 200, y = 200, anchor = 'center')
+        senhalbl.place(x = 200, y = 230, anchor = 'center')
+        senha.place(x = 200, y = 260, anchor = 'center')
+        btnEnviar.pack(fill='x', side = 'bottom')
+        update.bind('<Return>', up)
 
     def Del(self):
-        pass
+        def deletar(event):
+            matdb = mat.get()
+            if matdb != '':
+                self.c.execute(f'DELETE FROM user WHERE matricula = "{matdb}"')
+                self.conn.commit()
+                self.msg(1, 'Usuário removido com sucesso!! ')
+                dell.destroy()
+            else:
+                self.msg(2, 'Dadso Inválidos!')
+
+        dell = Toplevel()
+        if self.nome == 'Undefined':
+            dell.destroy()
+            self.msg(3, 'Realize Login!')
+        else:
+            pass
+        dell.geometry('400x400')
+        dell.resizable(width=False, height=False)
+        dell['bg'] = self.bg
+
+        tti = Label(
+            dell,
+            image = self.delUser,
+            borderwidth = 0,
+            bg = self.bg,
+            activebackground = self.bg
+        )
+        tt = Label(
+            dell,
+            text='Deletar Usuário!',
+            bg = self.bg,
+            fg = 'GhostWhite',
+            font = 'Fantasy 15 bold'
+        )
+
+        matlbl = Label(
+            dell,
+            text = 'Matricula:',
+            bg = self.bg,
+            fg = 'White',
+            font = 'Arial 12 bold'
+            )
+        mat = Entry(
+            dell,
+            bg = 'Black',
+            fg = 'white',
+            font = 'Arial 12 bold'
+            )
+        btnEnviar = Button(
+            dell,
+            text = 'Deletar!!',
+            bg = '#d90429',
+            fg = 'White',
+            font ='Arial 14 bold',
+            command = partial(deletar, 1)
+        )
+
+        dell.bind('<Return>', deletar)
+        tti.place(x = 60, y = 40, anchor = 'center')
+        tt.place(x = 220, y = 40, anchor = 'center')
+        matlbl.place(x = 200, y = 170, anchor = 'center')
+        mat.place(x = 200, y = 200, anchor = 'center')
+        btnEnviar.pack(fill='x', side = 'bottom')
 #========================CALL=BACK=============================
 
     def hxh(self, event):
