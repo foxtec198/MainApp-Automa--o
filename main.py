@@ -3,6 +3,7 @@ from sqlite3 import connect
 from tkinter import *
 from tkinter import ttk, messagebox, PhotoImage, filedialog
 from time import strftime as st
+from PIL import Image 
 
 from metas import Metas
 from vj import VJ
@@ -64,6 +65,7 @@ class App():
         self.userImg = pimg(file = r"img\\user.png")
         self.userImg = pimg(file = r"img\\user.png")
         self.cartImg = pimg(file = r"img\\cart.png")
+        self.powerBI = pimg(file = r'img\\pow.png')
 
         # DIREITOS AUTORAIS ----------------------------------------------------------------------------------------
         self.ms = 'Deselvolvido por TecnoBreve Enterprise, Direitos autorais reservados a mesma © Londrina 2022'
@@ -126,6 +128,24 @@ class App():
             command = self.logout
             )
         
+        self.ttCombo = Button(
+            self.loginFrame,
+            text='Escolha sua Filial:',
+            bg = '#d90429',
+            activebackground = '#d90429',
+            fg = 'white',
+            borderwidth = 0,
+            width = 200,
+            font='Arial 12 bold',
+            command = self.upfl
+            )
+
+        self.combo = ttk.Combobox(
+            self.loginFrame,
+            values=self.fls,
+            width=32,
+            ) 
+        
         # TEXT FRAME
         self.txt = Text(
             self.txtFrame,
@@ -144,6 +164,7 @@ class App():
             fg = "GhostWhite"
             ).place(x = 280, y = 15 , anchor='center' )
 
+        # HXH
         self.btnHxh = Button(
             self.hxhFrame,
             text = 'Comercial',
@@ -154,7 +175,7 @@ class App():
             activebackground= self.bg,
             command = partial(self.hxh, 1)
             )
-
+        
         self.lblHxh = Button(
             self.hxhFrame,
             text = 'Comercial',
@@ -165,7 +186,8 @@ class App():
             fg = 'white',
             command = partial(self.hxh, 1)
             )
-
+        
+        # PA
         self.btnPA = Button(
             self.paFrame,
             text = 'Participalçao',
@@ -188,6 +210,7 @@ class App():
             command = self.pa
             )
         
+        # VJ
         self.btnVJ= Button(
             self.vjFrame, 
             text = 'VendaComJuros', 
@@ -209,7 +232,8 @@ class App():
             fg = 'white',
             command = self.vj 
             )
-
+        
+        # ESTORE
         self.btnCart = Button(
             self.esFrame, 
             text = 'E-Store', 
@@ -233,19 +257,6 @@ class App():
             )
         
         # SET FRAME
-        self.ttCombo = Label(
-            self.setFrame,
-            text='Escolha sua Filial:',
-            bg = self.bg,
-            fg = 'White',
-            font='Arial 12 bold'
-            )
-
-        self.combo = ttk.Combobox(
-            self.setFrame,
-            values=self.fls
-            ) 
-
         self.ttAdd = Label(
             self.setFrame,
             text = 'Adicionar Usuário:',
@@ -262,14 +273,25 @@ class App():
             borderwidth = 0,
             command = self.Add
         )
-
+        self.ttArq = Label(
+            self.setFrame,
+            text = '''
+                Para Atualizar as Metas, Exporte no PowerBI com a 
+                função "Dados Resumidos", salve como "metas.xlsx",
+                e cole no diretório, caso necessário, substitua!!
+            ''',
+            bg = self.bg,
+            fg = 'white',
+            font = 'Arial 11 bold'
+        )
         self.btnArq = Button(
             self.setFrame,
+            image = self.powerBI, 
             text = 'Choose File',
-            command = self.teste
+            command = self.dirMt
         )
-        
-        self.combo.set('L062')
+        fla = open('txt\\fl.txt').read()
+        self.combo.set(fla)
         self.combo['state'] = 'readonly'
         # UpDate and Bind
         self.win.bind('<F5>', self.hxh)
@@ -296,7 +318,10 @@ class App():
         self.lblMeta.place(x= 100, y = 220, anchor="center")
         self.btnLogin.place(x = 100, y = 600, anchor="center")
         self.btnLogout.place(x = 100, y = 640, anchor="center")
-        
+
+        self.ttCombo.place(x = 100, y = 255, anchor = 'center')
+        self.combo.place(x = 105, y = 280, anchor = 'center')
+
         # Text
         self.txt.place(x=10, y=30)
 
@@ -311,12 +336,11 @@ class App():
         self.lblEs.place(x = 170, y = 40, anchor = 'center')
         
         # SET FRAME
-        self.ttCombo.place(x = 90, y = 20, anchor = 'center')
-        self.combo.place(x = 90, y = 70, anchor = 'center')
-
         self.ttAdd.place(x = 300, y = 20, anchor = 'center')
         self.btnAdd.place(x = 300, y = 70, anchor = 'center')
-        self.btnArq.place(x = 90, y = 200, anchor = 'center')
+
+        self.ttArq.place(x = 170, y = 500, anchor = 'center')
+        self.btnArq.place(x = 450, y = 500, anchor = 'center')
 
     # Functions
     def msg(self, tp, msg):
@@ -393,7 +417,7 @@ class App():
             senhadb = senha.get()
             print(nomedb, senhadb, matdb)
             if nomedb != '' and matdb != '' and senhadb != '':
-                self.c.execute(f'insert into user(nome, matricula, senha) values ("{nomedb}","{int(matdb)}","{senhadb}")')
+                self.c.execute(f'insert into user(nome, matricula, senha) values ("{nomedb}","{matdb}","{senhadb}")')
                 self.conn.commit()
                 nomep = nomedb.split()
                 self.msg(1, f'{nomep[0]} adicionado com sucesso!')
@@ -485,10 +509,16 @@ class App():
         btnEnviar.pack(fill='x', side = 'bottom')
         add.bind('<Return>', enviar)
 
-    def teste(self):
-        print(os.listdir)
-        os.system('cd metas && explorer metas')
+    def dirMt(self):
+        os.system('explorer metas')
 
+    def upfl(self): 
+        if self.nome != 'Undefined': 
+            a = open('txt\\fl.txt', 'w')
+            a.write(self.combo.get())
+            a.close()
+        else:
+            self.msg(2, 'Realize Login!')
 #========================CALL=BACK=============================
 
     def hxh(self, event):
