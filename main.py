@@ -162,7 +162,6 @@ class App():
             fg = "GhostWhite"
             ).place(x = 280, y = 15 , anchor='center' )
 
-        # HxH
         self.btnHxh = Button(
             self.hxhFrame,
             text = 'Comercial',
@@ -264,8 +263,6 @@ class App():
             self.setFrame,
             values=self.fls
             ) 
-        self.combo.set('L062')
-        self.combo['state'] = 'readonly'
 
         self.ttAdd = Label(
             self.setFrame,
@@ -284,6 +281,14 @@ class App():
             command = self.Add
         )
 
+        self.btnArq = Button(
+            self.setFrame,
+            text = 'Choose File',
+            command = self.teste
+        )
+        
+        self.combo.set('L062')
+        self.combo['state'] = 'readonly'
         # UpDate and Bind
         self.win.bind('<F5>', self.hxh)
         self.win.bind('<F12>', self.estore)
@@ -329,6 +334,7 @@ class App():
 
         self.ttAdd.place(x = 300, y = 20, anchor = 'center')
         self.btnAdd.place(x = 300, y = 70, anchor = 'center')
+        self.btnArq.place(x = 90, y = 200, anchor = 'center')
 
     # Functions
     def msg(self, tp, msg):
@@ -450,7 +456,6 @@ class App():
             fg = 'white',
             font = 'Arial 12 bold'
             )
-
         matlbl = Label(
             add,
             text = 'Matricula:',
@@ -464,7 +469,6 @@ class App():
             fg = 'white',
             font = 'Arial 12 bold'
             )
-
         senhalbl = Label(
             add,
             text = 'Senha:',
@@ -484,21 +488,26 @@ class App():
             text = 'Adicionar!',
             bg = '#d90429',
             fg = 'White',
-            font ='Arial 11 bold',
+            font ='Arial 14 bold',
             command = partial(enviar, 1)
         )
-        tti.place(x = 30, y = 20, anchor = 'center')
-        tt.place(x = 200, y = 20, anchor = 'center')
-        nomelbl.place(x = 200, y = 80, anchor = 'center')
-        nome.place(x = 200, y = 110, anchor = 'center')
-        matlbl.place(x = 200, y = 140, anchor = 'center')
-        mat.place(x = 200, y = 170, anchor = 'center')
-        senhalbl.place(x = 200, y = 200, anchor = 'center')
-        senha.place(x = 200, y = 230, anchor = 'center')
-        btnEnviar.place(x = 200, y = 290, anchor = 'center')
+        
+        tti.place(x = 60, y = 40, anchor = 'center')
+        tt.place(x = 220, y = 40, anchor = 'center')
+        nomelbl.place(x = 200, y = 110, anchor = 'center')
+        nome.place(x = 200, y = 140, anchor = 'center')
+        matlbl.place(x = 200, y = 170, anchor = 'center')
+        mat.place(x = 200, y = 200, anchor = 'center')
+        senhalbl.place(x = 200, y = 230, anchor = 'center')
+        senha.place(x = 200, y = 260, anchor = 'center')
+        btnEnviar.pack(fill='x', side = 'bottom')
         add.bind('<Return>', enviar)
 
-    #========================CALL=BACK=============================
+    def teste(self):
+        print(os.listdir)
+        os.system('Explorer Downloads')
+
+#========================CALL=BACK=============================
 
     def hxh(self, event):
         txt = self.txt.get('1.0', END)
@@ -508,7 +517,7 @@ class App():
         
         self.msg(1, 'Realizando parcial')
         mainHxh()
-        os.system('cd pln && horaxhora.xlsx')
+        os.system('cd pln && horaxhora.xlsx && quit')
 
     def pa(self):
         txt = self.txt.get('1.0', END)
@@ -536,4 +545,5 @@ class App():
             es().iniciar()
         else:
             self.msg(1,'Realize Login!')
+
 App()
