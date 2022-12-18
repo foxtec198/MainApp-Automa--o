@@ -408,14 +408,11 @@ class App():
         arquivo = open('vj.txt', 'w')
         arquivo.write(txt)
         arquivo.close()
-        
         VJ().code()
         self.msg(1, 'Abrido parcial')
         os.system('vj.xlsx')
         
     def estore(self):
         self.msg(1, 'Abrindo estore')
-        os.system('estore.py')
-        
-      
+        os.system('estore.py')  
 App()
